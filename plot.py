@@ -109,23 +109,25 @@ def plotOfMe(data, Name):
     Cpk = cpk(U,L,sigma,mu)
     Cp = cp(U,L,sigma)
     texts = []
-    # x 设置 正态分布曲线的范围 , 符合正态分布再生成
-    # if(isNorm(result,mu,sigma)):
-    #     x = np.arange(result_min, result_max,0.001)
-    #     y = normfun(x, mu, sigma)
-    #     plt.plot(x, y)
-    # 正态分布曲线有bug 需调整
-    # 生成 正态分布曲线
 
     # y轴 设置为 % 显示
     formatter = FuncFormatter(to_percent)
     plt.gca().yaxis.set_major_formatter(formatter)
 
+    # x 设置 正态分布曲线的范围 , 符合正态分布再生成
+    # if(isNorm(result,mu,sigma)):
+    # x= np.arange(mu-3*sigma,mu+3*sigma,0.0001)
+    # y = normfun(x, mu, sigma)
+    # print(y)
+    # plt.plot(x, y,'g--',linewidth=2)
+    # 正态分布曲线有bug 需调整 , 不便于使用
+    # 生成 正态分布曲线
+
     # 划分上下限区间
     # 权重修改
     weights = np.ones_like(result)/float(len(result))
     # 保存数据到ans中,完成图形自适应设置
-    ans = plt.hist(result, 100, weights=weights,
+    ans = plt.hist(result, 50, weights=weights,
                    rwidth=0.7, color='orange')
     # 坐标轴刻度  自适应, x轴即可
     # ax = plt.gca()

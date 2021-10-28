@@ -52,6 +52,11 @@ def read_sbin_csv():
     print(temp)
     # 计算占比
     temp['percent'] = temp['Count']/Total
+    major_fail = []
+    for row_index,row in temp.iterrows():
+        if(temp.loc[row_index,'percent'] >=  0.01):
+            major_fail.append(temp.loc[row_index,'Name'])
+    print(major_fail)
     temp['percent'] = temp['percent'].apply(lambda x:format(x,'.2%'))
     temp.to_csv('./output/Total%s.csv'%Total)
 read_sbin_csv()

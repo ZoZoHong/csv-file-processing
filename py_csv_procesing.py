@@ -101,8 +101,15 @@ def read_sbin_csv():
     print(temp)
     # 计算占比
     temp['percent'] = temp['Count']/Total
+    major_fail = []
+    for row_index,row in temp.iterrows():
+        if(temp.loc[row_index,'percent'] >=  0.01 and temp.loc[row_index,'percent']<=0.5):
+            # 找到__AllFaill 并删除 
+            major_fail.append((temp.loc[row_index,'Name'])[:-9])
+    print(major_fail)
     temp['percent'] = temp['percent'].apply(lambda x:format(x,'.2%'))
     temp.to_csv('./output/Total%s.csv'%Total)
+    return major_fail
 
 # 加个更新文件的判断，像服务器那样，判断文件时间戳，太久了就更新一下，不过这种文件一般都不会更新
 data_startAtSiteNum = read_csv_data(ls, 'SITE_NUM')
@@ -208,14 +215,14 @@ def plotOfMe(data, Name):
     # ax.xaxis.set_major_locator(x_major_locator)
     # 标签数值
     for i in range(len(ans[0])):
-        # 显示多数
-        if(ans[0][i] >= 0.05):
-            datatostr = str(round(ans[0][i]*100, 2))+"%"
-            texts.append( plt.text(ans[1][i], ans[0][i], datatostr))
         # 显示失效
         if((ans[1][i] < L or ans[1][i]> U )and ans[0][i] >= 0.01):
             datatostr = str(round(ans[0][i]*100, 3))+"%"
             texts.append(plt.text(ans[1][i], ans[0][i], datatostr,color='red'))
+        # 显示多数
+        elif(ans[0][i] >= 0.05):
+            datatostr = str(round(ans[0][i]*100, 2))+"%"
+            texts.append( plt.text(ans[1][i], ans[0][i], datatostr))
         # 文字重叠 adjust_text
     adjust_text(texts,lim=50,arrowprops=dict( arrowstyle='->', lw= 1, color='red'))
     # 网格线 , 坐标轴标签, 标题
@@ -280,26 +287,26 @@ def plotOfsite(site1,site2, Name):
     plt.title(Name)
 
 
-   
-generate_visible_data(df_bin1,'Pin10BST')
+# generate_visible_data(df_bin1,'Pin10BST')
+major_fail = read_sbin_csv();  
 
-# mkdir('./output/major_fail/picture')
-# for col in major_fail:
-#     plotOfMe(df2, col)
-#     print('save picture :', './output/picture/%s.png' % col)
-#     plt.savefig('./output/major_fail/picture/%s.png' % col, bbox_inches='tight')
-#     # plt.show()
-#     plt.clf()   # Clear figure清除所有轴，但是窗口打开，这样它可以被重复使用。
-#     plt.close()  # Close a figure window
-
-mkdir('./output/site_gap/picture')
-for col in df_site1:
-    plotOfsite(df_site1,df_site2,col)
-    print('save picture :', './output/site_gap/picture/%s.png' % col)
-    plt.savefig('./output/site_gap/picture/%s.png' % col, bbox_inches='tight')
+mkdir('./output/major_fail/picture')
+for col in major_fail:
+    plotOfMe(df2, col)
+    print('save picture :', './output/picture/%s.png' % col)
+    plt.savefig('./output/major_fail/picture/%s.png' % col, bbox_inches='tight')
     # plt.show()
     plt.clf()   # Clear figure清除所有轴，但是窗口打开，这样它可以被重复使用。
     plt.close()  # Close a figure window
+
+# mkdir('./output/site_gap/picture')
+# for col in df_site1:
+#     plotOfsite(df_site1,df_site2,col)
+#     print('save picture :', './output/site_gap/picture/%s.png' % col)
+#     plt.savefig('./output/site_gap/picture/%s.png' % col, bbox_inches='tight')
+#     # plt.show()
+#     plt.clf()   # Clear figure清除所有轴，但是窗口打开，这样它可以被重复使用。
+#     plt.close()  # Close a figure window
 
 
 
