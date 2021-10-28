@@ -82,7 +82,7 @@ def read_sbin_csv():
     # 总数
     Total,Pass,Fail = 0,0,0
     for index in range(len(ls)):
-        test = pd.read_csv(ls[index], sep='\s+',names=['Name','Count'],skiprows=rowarr[0],nrows=3)
+        test = pd.read_csv(ls[index], sep='\s+',names=['Name','Count'],skiprows=rowarr[index],nrows=3)
         Total += test.loc[0,'Count']
         Pass += test.loc[1,'Count']
         Fail += test.loc[2,'Count']
@@ -107,8 +107,8 @@ def read_sbin_csv():
 # 加个更新文件的判断，像服务器那样，判断文件时间戳，太久了就更新一下，不过这种文件一般都不会更新
 data_startAtSiteNum = read_csv_data(ls, 'SITE_NUM')
 data_startAtSiteNum.to_csv('./output/data_startAtSiteNum.csv')
-data_startAtSBin = read_sbin_csv()
-data_startAtSBin.to_csv('./output/data_startAtSBin.csv')
+# data_startAtSBin = read_sbin_csv()
+# data_startAtSBin.to_csv('./output/data_startAtSBin.csv')
 
 
 # 绘图

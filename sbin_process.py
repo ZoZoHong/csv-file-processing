@@ -54,7 +54,7 @@ def read_sbin_csv():
     temp['percent'] = temp['Count']/Total
     temp['percent'] = temp['percent'].apply(lambda x:format(x,'.2%'))
     temp.to_csv('./output/Total%s.csv'%Total)
-
+read_sbin_csv()
 
 # # 加个更新文件的判断，像服务器那样，判断文件时间戳，太久了就更新一下，不过这种文件一般都不会更新
 # data_startAtSiteNum = read_csv_data(ls, 'SITE_NUM')
