@@ -107,7 +107,7 @@ def read_sbin_csv():
 # 加个更新文件的判断，像服务器那样，判断文件时间戳，太久了就更新一下，不过这种文件一般都不会更新
 data_startAtSiteNum = read_csv_data(ls, 'SITE_NUM')
 data_startAtSiteNum.to_csv('./output/data_startAtSiteNum.csv')
-data_startAtSBin = read_csv_data(ls, 'SBin')
+data_startAtSBin = read_sbin_csv()
 data_startAtSBin.to_csv('./output/data_startAtSBin.csv')
 
 
