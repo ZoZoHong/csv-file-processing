@@ -46,7 +46,6 @@ def read_csv_data(files, str):
         else:
             temp = pd.read_csv(
                 file, sep='None', skiprows=rowarr[index]-1, nrows=(siteNum_row[index]-rowarr[index]-1))
-            # temp.columns = ['SBin_Num','Name','Count','percent']
             data = pd.merge(data, temp, left_index=True,
                             right_index=True, how="outer")
     return data
