@@ -35,6 +35,10 @@ def mkdir(path):
         print (path+' 目录已存在')
         return False
 
+mkdir('./output')
+mkdir('./output/picture')
+mkdir('./output/major_fail/picture')
+mkdir('./output/site_gap/picture')
 # 获取文件地址
 def file_name(file_dir):
     L = []
@@ -123,7 +127,6 @@ data_startAtSiteNum.to_csv('./output/data_startAtSiteNum.csv')
 np.set_printoptions(threshold=20)
 start = timeit.default_timer()
 df = pd.read_csv('./output/data_startAtSiteNum.csv')
-major_fail = ['ReEfuseOK','LS_LKG_12V','ICS_final','Efuse31_16']
 
 Unit = df.iloc[0]
 df = df.apply(pd.to_numeric, errors='coerce').fillna(0.0)
@@ -287,10 +290,10 @@ def plotOfsite(site1,site2, Name):
     plt.title(Name)
 
 
-# generate_visible_data(df_bin1,'Pin10BST')
+generate_visible_data(df_bin1,'Pin10BST')
 major_fail = read_sbin_csv();  
 
-mkdir('./output/major_fail/picture')
+
 for col in major_fail:
     plotOfMe(df2, col)
     print('save picture :', './output/picture/%s.png' % col)
@@ -299,14 +302,13 @@ for col in major_fail:
     plt.clf()   # Clear figure清除所有轴，但是窗口打开，这样它可以被重复使用。
     plt.close()  # Close a figure window
 
-# mkdir('./output/site_gap/picture')
-# for col in df_site1:
-#     plotOfsite(df_site1,df_site2,col)
-#     print('save picture :', './output/site_gap/picture/%s.png' % col)
-#     plt.savefig('./output/site_gap/picture/%s.png' % col, bbox_inches='tight')
-#     # plt.show()
-#     plt.clf()   # Clear figure清除所有轴，但是窗口打开，这样它可以被重复使用。
-#     plt.close()  # Close a figure window
+for col in df_site1:
+    plotOfsite(df_site1,df_site2,col)
+    print('save picture :', './output/site_gap/picture/%s.png' % col)
+    plt.savefig('./output/site_gap/picture/%s.png' % col, bbox_inches='tight')
+    # plt.show()
+    plt.clf()   # Clear figure清除所有轴，但是窗口打开，这样它可以被重复使用。
+    plt.close()  # Close a figure window
 
 
 
