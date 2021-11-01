@@ -39,6 +39,7 @@ mkdir('./output')
 mkdir('./output/picture')
 mkdir('./output/major_fail/picture')
 mkdir('./output/site_gap/picture')
+mkdir('./output/site_gap/major')
 # 获取文件地址
 def file_name(file_dir):
     L = []
@@ -129,22 +130,22 @@ start = timeit.default_timer()
 df = pd.read_csv('./output/data_startAtSiteNum.csv')
 
 Unit = df.iloc[0]
-df = df.apply(pd.to_numeric, errors='coerce').fillna(0.0)
+df = df.apply(pd.to_numeric, errors='coerce').fillna(df.mean())
 df1 = df[:3]
+
 LimitL = df1.iloc[1]
 LimitU = df1.iloc[2]
 
 df_bin1 = df[df.SOFT_BIN == 1]
 df_bin1.to_csv('./output/bin1.csv')
-
-
 df2 = df.astype(float)
 df2 = df2[3:]
 
 # site num
 df_site1 = df_bin1[df_bin1.SITE_NUM == 1]
 df_site2 = df_bin1[df_bin1.SITE_NUM == 2]
-
+df_major_site1 = df2 [df2.SITE_NUM == 1]
+df_major_site2 = df2 [df2.SITE_NUM == 2]
 
 
 # 正态分布图
@@ -261,20 +262,38 @@ def Statistical_parameters(data,Name):
     Cpk = cpk(U,L,sigma,mu)
     Cp = cp(U,L,sigma)
     return result,mu,sigma,result_max,result_min,L,U,Cpk,Cp
-
 def plotOfsite(site1,site2, Name):
     # result1,mu1,sigma1,result_max1,result_min1,L1,U1,Cpk1,Cp1 = Statistical_parameters(site1,Name)
     # result2,mu2,sigma2,result_max2,result_min2,L2,U2,Cpk2,Cp2 = Statistical_parameters(site2,Name)
     result1 = site1[Name]
     result2 = site2[Name]
+    # 先取出行，然后在取列
+    # 会出现记录了39就失效了，40也加入计算，所以会多了很多比例 
+    # len1 = len(df_major_site1[df_major_site1.eval('I_WARN') < LimitL['I_WARN']]['I_WARN'])
+    # len2 = len(df_major_site1[df_major_site1.eval('I_WARN') > LimitU['I_WARN']]['I_WARN'])
+    # len3 = len(df_major_site1['I_WARN'])
+    # len4 = len(df_major_site1)
+    # print(df_major_site1[df_major_site1.eval('I_WARN') < LimitL['I_WARN']]['I_WARN'])
+    # print(df_major_site1[df_major_site1.eval('I_WARN') > LimitU['I_WARN']]['I_WARN'])
+    # len1 = len(df_major_site2[df_major_site2.eval('I_WARN') < LimitL['I_WARN']]['I_WARN'])
+    # len2 = len(df_major_site2[df_major_site2.eval('I_WARN') > LimitU['I_WARN']]['I_WARN'])
+    # len3 = len(df_major_site2['I_WARN'])
+    # len4 = len(df_major_site2)
+
+    fail_rate1 = (len(site1[site1.eval(Name) < LimitL[Name]][Name]) + len(site1[site1.eval(Name) > LimitU[Name]][Name]) ) /len(site1[Name])
+    fail_rate2 = (len(site2[site2.eval(Name) < LimitL[Name]][Name]) + len(site2[site2.eval(Name) > LimitU[Name]][Name]) ) /len(site2[Name])
+    
+    fail_rate1,fail_rate2 = str(round(100*fail_rate1, 2))+"%" , str(round(100*fail_rate2, 2))+"%"
     # y轴 设置为 % 显示
     formatter = FuncFormatter(to_percent)
     plt.gca().yaxis.set_major_formatter(formatter)
+
 
     # 划分上下限区间
     # 权重修改
     weights1 = np.ones_like(result1)/float(len(result1))
     weights2 = np.ones_like(result2)/float(len(result2))
+
     # 保存数据到ans中,完成图形自适应设置
     # plt.hist(result1, 100, weights=weights1,histtype='barstacked',
     #                rwidth=1, alpha= 0.6,label='SITE1')
@@ -287,7 +306,38 @@ def plotOfsite(site1,site2, Name):
     plt.xlabel('Measure')
     plt.ylabel('Percent')
     plt.legend(loc='upper right')
-    plt.title(Name)
+    plt.title(Name + 'fail_rate: SITE1 -> %s SITE2 ->%s ' %(fail_rate1,fail_rate2) )
+
+
+# def plotOfsite(site1,site2, Name):
+#     # result1,mu1,sigma1,result_max1,result_min1,L1,U1,Cpk1,Cp1 = Statistical_parameters(site1,Name)
+#     # result2,mu2,sigma2,result_max2,result_min2,L2,U2,Cpk2,Cp2 = Statistical_parameters(site2,Name)
+#     result1 = site1[Name]
+#     result2 = site2[Name]
+    
+
+
+#     # y轴 设置为 % 显示
+#     formatter = FuncFormatter(to_percent)
+#     plt.gca().yaxis.set_major_formatter(formatter)
+
+#     # 划分上下限区间
+#     # 权重修改
+#     weights1 = np.ones_like(result1)/float(len(result1))
+#     weights2 = np.ones_like(result2)/float(len(result2))
+#     # 保存数据到ans中,完成图形自适应设置
+#     # plt.hist(result1, 100, weights=weights1,histtype='barstacked',
+#     #                rwidth=1, alpha= 0.6,label='SITE1')
+#     # plt.hist(result2, 100, weights=weights2,histtype='barstacked',
+#     #                rwidth=1, alpha= 0.6,label= 'SITE2' )
+#     plt.hist([result1,result2],20,weights=[weights1,weights2],label=['SITE1','SITE2'])
+    
+#     # 网格线 , 坐标轴标签, 标题
+#     plt.grid()
+#     plt.xlabel('Measure')
+#     plt.ylabel('Percent')
+#     plt.legend(loc='upper right')
+#     plt.title(Name)
 
 
 generate_visible_data(df_bin1,'Pin10BST')
@@ -310,6 +360,14 @@ for col in df_site1:
     plt.clf()   # Clear figure清除所有轴，但是窗口打开，这样它可以被重复使用。
     plt.close()  # Close a figure window
 
+
+for col in major_fail:
+    plotOfsite(df_major_site1,df_major_site2,col)
+    print('save picture :', './output/site_gap/major/%s.png' % col)
+    plt.savefig('./output/site_gap/major/%s.png' % col, bbox_inches='tight')
+    # plt.show()
+    plt.clf()   # Clear figure清除所有轴，但是窗口打开，这样它可以被重复使用。
+    plt.close()  # Close a figure window
 
 
 
