@@ -9,7 +9,8 @@ import timeit
 from matplotlib.ticker import FuncFormatter
 from adjustText import adjust_text
 from scipy import stats
-
+from matplotlib.ticker import MultipleLocator, FormatStrFormatter
+import math
 import timeit
 start = timeit.default_timer()
 
@@ -204,8 +205,11 @@ def plotOfMe(data, Name):
 
     # y轴 设置为 % 显示
     formatter = FuncFormatter(to_percent)
-    plt.gca().yaxis.set_major_formatter(formatter)
-
+    ax = plt.gca()
+    ax.yaxis.set_major_formatter(formatter)
+    major_ax = pow(10,(math.floor(math.log10(abs(max(result))))))
+    xminorLocator   = MultipleLocator(round(major_ax/5,2))
+    ax.xaxis.set_minor_locator(xminorLocator)
     # 划分上下限区间
     # 权重修改
     weights = np.ones_like(result)/float(len(result))
@@ -286,8 +290,11 @@ def plotOfsite(site1,site2, Name):
     fail_rate1,fail_rate2 = str(round(100*fail_rate1, 2))+"%" , str(round(100*fail_rate2, 2))+"%"
     # y轴 设置为 % 显示
     formatter = FuncFormatter(to_percent)
-    plt.gca().yaxis.set_major_formatter(formatter)
-
+    ax = plt.gca()
+    ax.yaxis.set_major_formatter(formatter)
+    major_ax = pow(10,(math.floor(math.log10(abs(max(result1))))))
+    xminorLocator   = MultipleLocator(round(major_ax/5,2))
+    ax.xaxis.set_minor_locator(xminorLocator)
 
     # 划分上下限区间
     # 权重修改
